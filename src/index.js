@@ -15,7 +15,6 @@ const WheelComponent = ({
   fontFamily = 'proxima-nova'
 }) => {
   let currentSegment = ''
-  let isStarted = false
   const [isFinished, setFinished] = useState(false)
   let timerHandle = 0
   const timerDelay = segments.length
@@ -42,7 +41,6 @@ const WheelComponent = ({
 
   const initCanvas = () => {
     let canvas = document.getElementById('canvas')
-    console.log(navigator)
     if (navigator.userAgent.indexOf('MSIE') !== -1) {
       canvas = document.createElement('canvas')
       canvas.setAttribute('width', 1000)
@@ -54,7 +52,6 @@ const WheelComponent = ({
     canvasContext = canvas.getContext('2d')
   }
   const spin = () => {
-    isStarted = true
     if (timerHandle === 0) {
       spinStart = new Date().getTime()
       // maxSpeed = Math.PI / ((segments.length*2) + Math.random())
@@ -197,7 +194,6 @@ const WheelComponent = ({
     ctx.fillStyle = primaryColor
     ctx.font = 'bold 1.5em ' + fontFamily
     currentSegment = segments[i]
-    isStarted && ctx.fillText(currentSegment, centerX + 10, centerY + size + 50)
   }
   const clear = () => {
     const ctx = canvasContext
