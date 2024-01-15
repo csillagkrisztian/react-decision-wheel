@@ -58,11 +58,13 @@ const WheelComponent = ({
     let canvas = document.getElementById('canvas')
     if (navigator.userAgent.indexOf('MSIE') !== -1) {
       canvas = document.createElement('canvas')
-      canvas.setAttribute('width', 1000)
-      canvas.setAttribute('height', 600)
       canvas.setAttribute('id', 'canvas')
       document.getElementById('wheel').appendChild(canvas)
     }
+    canvas.style.width = '100%'
+    canvas.style.height = `${canvas.offsetWidth / 1}px`
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
     canvas.addEventListener('click', spin, false)
     canvasContext = canvas.getContext('2d')
   }
@@ -225,10 +227,10 @@ const WheelComponent = ({
     <div id='wheel'>
       <canvas
         id='canvas'
-        width='600'
-        height='600'
         style={{
           pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto',
+          width: '100%',
+          height: '100%',
           ...canvasStyle
         }}
       />
