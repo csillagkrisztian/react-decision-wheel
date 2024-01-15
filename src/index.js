@@ -185,9 +185,9 @@ const WheelComponent = ({
     ctx.strokeStyle = primaryColor
     ctx.fileStyle = primaryColor
     ctx.beginPath()
-    ctx.moveTo(centerX + 20, centerY - 50)
-    ctx.lineTo(centerX - 20, centerY - 50)
-    ctx.lineTo(centerX, centerY - 70)
+    ctx.moveTo(centerX + 20, centerY - 40)
+    ctx.lineTo(centerX - 20, centerY - 40)
+    ctx.lineTo(centerX, centerY - 55)
     ctx.closePath()
     ctx.fill()
     const change = angleCurrent + Math.PI / 2
