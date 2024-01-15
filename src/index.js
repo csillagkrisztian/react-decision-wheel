@@ -61,10 +61,14 @@ const WheelComponent = ({
       canvas.setAttribute('id', 'canvas')
       document.getElementById('wheel').appendChild(canvas)
     }
-    canvas.style.width = '100%'
-    canvas.style.height = `${canvas.offsetWidth / 1}px`
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
+    canvas.width = 600
+    canvas.height = 600
+
+    // Get the parent div and set its styles
+    const parentDiv = canvas.parentElement
+    parentDiv.style.maxWidth = '100%'
+    parentDiv.style.objectFit = 'contain'
+
     canvas.addEventListener('click', spin, false)
     canvasContext = canvas.getContext('2d')
   }
@@ -229,8 +233,6 @@ const WheelComponent = ({
         id='canvas'
         style={{
           pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto',
-          width: '100%',
-          height: '100%',
           ...canvasStyle
         }}
       />
