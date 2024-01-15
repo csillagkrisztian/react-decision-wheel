@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from 'react'
 
+function adjust(color, amount) {
+  return (
+    '#' +
+    color
+      .replace(/^#/, '')
+      .replace(/../g, (color) =>
+        (
+          '0' +
+          Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)
+        ).substr(-2)
+      )
+  )
+}
+
 const WheelComponent = ({
   segments,
   segColors,
@@ -127,7 +141,7 @@ const WheelComponent = ({
     ctx.lineTo(centerX, centerY)
     ctx.closePath()
     ctx.fillStyle =
-      currentSegment.key === key ? `${segColors[key]}55` : segColors[key]
+      currentSegment.key === key ? adjust(segColors[key], -5) : segColors[key]
     ctx.fill()
     ctx.stroke()
     ctx.save()
