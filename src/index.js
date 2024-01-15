@@ -14,7 +14,7 @@ const WheelComponent = ({
   downDuration = 1000,
   fontFamily = 'proxima-nova'
 }) => {
-  let currentSegment = ''
+  let currentSegment = { text: '', key: 0 }
   const [isFinished, setFinished] = useState(false)
   let timerHandle = 0
   const timerDelay = segments.length
@@ -57,12 +57,12 @@ const WheelComponent = ({
       // maxSpeed = Math.PI / ((segments.length*2) + Math.random())
       maxSpeed = Math.PI / segments.length
       frames = 0
+      draw()
       timerHandle = setInterval(onTimerTick, timerDelay)
     }
   }
   const onTimerTick = () => {
     frames++
-    draw()
     const duration = new Date().getTime() - spinStart
     let progress = 0
     let finished = false
@@ -71,7 +71,10 @@ const WheelComponent = ({
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2)
     } else {
       if (winningSegment) {
-        if (currentSegment === winningSegment && frames > segments.length) {
+        if (
+          currentSegment.text === winningSegment &&
+          frames > segments.length
+        ) {
           progress = duration / upTime
           angleDelta =
             maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2)
@@ -79,15 +82,18 @@ const WheelComponent = ({
         } else {
           progress = duration / downTime
           angleDelta =
-            maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2)
+            (maxSpeed / (progress * 10)) *
+            Math.sin((progress * Math.PI) / 2 + Math.PI / 2)
         }
       } else {
         progress = duration / downTime
-        angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2)
+        angleDelta =
+          (maxSpeed / (progress * 10)) *
+          Math.sin((progress * Math.PI) / 2 + Math.PI / 2)
       }
       if (progress >= 1) finished = true
     }
-
+    draw()
     angleCurrent += angleDelta
     while (angleCurrent >= Math.PI * 2) angleCurrent -= Math.PI * 2
     if (finished) {
@@ -120,13 +126,14 @@ const WheelComponent = ({
     ctx.arc(centerX, centerY, size, lastAngle, angle, false)
     ctx.lineTo(centerX, centerY)
     ctx.closePath()
-    ctx.fillStyle = segColors[key]
+    ctx.fillStyle =
+      currentSegment.key === key ? `${segColors[key]}55` : segColors[key]
     ctx.fill()
     ctx.stroke()
     ctx.save()
     ctx.translate(centerX, centerY)
     ctx.rotate((lastAngle + angle) / 2)
-    ctx.fillStyle = contrastColor
+    ctx.fillStyle = primaryColor
     ctx.font = 'bold 1em ' + fontFamily
     ctx.fillText(value.substr(0, 21), size / 2 + 20, 0)
     ctx.restore()
@@ -150,14 +157,14 @@ const WheelComponent = ({
 
     // Draw a center circle
     ctx.beginPath()
-    ctx.arc(centerX, centerY, 50, 0, PI2, false)
+    ctx.arc(centerX, centerY, 40, 0, PI2, false)
     ctx.closePath()
-    ctx.fillStyle = primaryColor
+    ctx.fillStyle = contrastColor
     ctx.lineWidth = 10
-    ctx.strokeStyle = contrastColor
+    ctx.strokeStyle = primaryColor
     ctx.fill()
     ctx.font = 'bold 1em ' + fontFamily
-    ctx.fillStyle = contrastColor
+    ctx.fillStyle = primaryColor
     ctx.textAlign = 'center'
     ctx.fillText(buttonText, centerX, centerY + 3)
     ctx.stroke()
@@ -175,8 +182,8 @@ const WheelComponent = ({
   const drawNeedle = () => {
     const ctx = canvasContext
     ctx.lineWidth = 1
-    ctx.strokeStyle = contrastColor
-    ctx.fileStyle = contrastColor
+    ctx.strokeStyle = primaryColor
+    ctx.fileStyle = primaryColor
     ctx.beginPath()
     ctx.moveTo(centerX + 20, centerY - 50)
     ctx.lineTo(centerX - 20, centerY - 50)
@@ -191,9 +198,9 @@ const WheelComponent = ({
     if (i < 0) i = i + segments.length
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillStyle = primaryColor
+    ctx.fillStyle = contrastColor
     ctx.font = 'bold 1.5em ' + fontFamily
-    currentSegment = segments[i]
+    currentSegment = { text: segments[i], key: i }
   }
   const clear = () => {
     const ctx = canvasContext
@@ -203,8 +210,8 @@ const WheelComponent = ({
     <div id='wheel'>
       <canvas
         id='canvas'
-        width='1000'
-        height='800'
+        width='600'
+        height='600'
         style={{
           pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto'
         }}
