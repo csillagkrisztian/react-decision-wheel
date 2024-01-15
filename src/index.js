@@ -141,7 +141,7 @@ const WheelComponent = ({
     ctx.lineTo(centerX, centerY)
     ctx.closePath()
     ctx.fillStyle =
-      currentSegment.key === key ? adjust(segColors[key], -5) : segColors[key]
+      currentSegment.key === key ? adjust(segColors[key], 45) : segColors[key]
     ctx.fill()
     ctx.stroke()
     ctx.save()
