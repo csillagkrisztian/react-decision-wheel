@@ -15,6 +15,7 @@ function adjust(color, amount) {
 }
 
 const WheelComponent = ({
+  canvasStyle = {},
   segments,
   segColors,
   winningSegment,
@@ -227,7 +228,8 @@ const WheelComponent = ({
         width='600'
         height='600'
         style={{
-          pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto'
+          pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto',
+          ...canvasStyle
         }}
       />
     </div>
