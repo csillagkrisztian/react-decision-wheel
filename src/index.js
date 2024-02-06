@@ -58,6 +58,12 @@ const WheelComponent = forwardRef(
         window.scrollTo(0, 1)
       }, 0)
     }, [])
+
+    useEffect(() => {
+      clear()
+      initCanvas()
+    }, [segments])
+
     const wheelInit = () => {
       initCanvas()
       wheelDraw()
