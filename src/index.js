@@ -1,4 +1,9 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
+import React, {
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle
+} from 'react'
 
 function adjust(color, amount) {
   return (
@@ -79,6 +84,7 @@ const WheelComponent = forwardRef(
 
     useImperativeHandle(ref, () => ({
       redraw: () => {
+        clear()
         initCanvas()
       }
     }))
