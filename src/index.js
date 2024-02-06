@@ -59,11 +59,6 @@ const WheelComponent = forwardRef(
       }, 0)
     }, [])
 
-    useEffect(() => {
-      initCanvas()
-      draw()
-    }, [segments])
-
     const wheelInit = () => {
       initCanvas()
       wheelDraw()
@@ -91,6 +86,13 @@ const WheelComponent = forwardRef(
     useImperativeHandle(ref, () => ({
       redraw: () => {
         initCanvas()
+      },
+      redraw2: () => {
+        draw()
+      },
+      redraw3: () => {
+        initCanvas()
+        draw()
       }
     }))
 
