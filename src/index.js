@@ -41,30 +41,24 @@ const WheelComponent = forwardRef(
     let currentSegment = { text: '', key: 0 }
     const [isFinished, setFinished] = useState(false)
     let timerHandle = 0
-    const timerDelay = segments.length
     let angleCurrent = 0
     let angleDelta = 0
     let canvasContext = null
-    let maxSpeed = Math.PI / `${segments.length}`
-    const upTime = segments.length * upDuration
-    const downTime = segments.length * downDuration
     let spinStart = 0
     let frames = 0
     const centerX = 300
     const centerY = 300
     useEffect(() => {
-      wheelInit()
+      wheelInit(segments)
       setTimeout(() => {
         window.scrollTo(0, 1)
       }, 0)
     }, [])
-
-    const wheelInit = () => {
-      initCanvas()
-      wheelDraw()
+    const wheelInit = (segments) => {
+      initCanvas(segments)
+      wheelDraw(segments)
     }
-
-    const initCanvas = () => {
+    const initCanvas = (segments) => {
       let canvas = document.getElementById('canvas')
       if (navigator.userAgent.indexOf('MSIE') !== -1) {
         canvas = document.createElement('canvas')
@@ -78,39 +72,39 @@ const WheelComponent = forwardRef(
       const parentDiv = canvas.parentElement
       parentDiv.style.maxWidth = '100%'
       parentDiv.style.objectFit = 'contain'
-
-      canvas.addEventListener('click', spin, false)
       canvasContext = canvas.getContext('2d')
     }
 
     useImperativeHandle(ref, () => ({
-      redraw: () => {
-        initCanvas()
+      spin: (segments) => {
+        initCanvas(segments)
+        spin(segments)
       },
-      redraw2: () => {
-        draw()
-      },
-      redraw3: () => {
-        initCanvas()
-        draw()
+      redraw: (segments) => {
+        initCanvas(segments)
+        wheelDraw(segments)
       }
     }))
 
-    const spin = () => {
+    const spin = (segments) => {
       if (timerHandle === 0) {
         spinStart = new Date().getTime()
-        // maxSpeed = Math.PI / ((segments.length*2) + Math.random())
-        maxSpeed = Math.PI / segments.length
+        const maxSpeed = Math.PI / `${segments.length}`
         frames = 0
-        draw()
-        timerHandle = setInterval(onTimerTick, timerDelay)
+        draw(segments)
+        const timerDelay = segments.length
+        timerHandle = setInterval(() => {
+          onTimerTick(segments, maxSpeed)
+        }, timerDelay)
       }
     }
-    const onTimerTick = () => {
+    const onTimerTick = (segments, maxSpeed) => {
       frames++
       const duration = new Date().getTime() - spinStart
       let progress = 0
       let finished = false
+      const upTime = segments.length * upDuration
+      const downTime = segments.length * downDuration
       if (duration < upTime) {
         progress = duration / upTime
         angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2)
@@ -138,7 +132,7 @@ const WheelComponent = forwardRef(
         }
         if (progress >= 1) finished = true
       }
-      draw()
+      draw(segments)
       angleCurrent += angleDelta
       while (angleCurrent >= Math.PI * 2) angleCurrent -= Math.PI * 2
       if (finished) {
@@ -150,19 +144,19 @@ const WheelComponent = forwardRef(
       }
     }
 
-    const wheelDraw = () => {
+    const wheelDraw = (segments) => {
       clear()
-      drawWheel()
-      drawNeedle()
+      drawWheel(segments)
+      drawNeedle(segments)
     }
 
-    const draw = () => {
+    const draw = (segments) => {
       clear()
-      drawWheel()
-      drawNeedle()
+      drawWheel(segments)
+      drawNeedle(segments)
     }
 
-    const drawSegment = (key, lastAngle, angle) => {
+    const drawSegment = (segments, key, lastAngle, angle) => {
       const ctx = canvasContext
       const value = segments[key]
       ctx.save()
@@ -184,7 +178,7 @@ const WheelComponent = forwardRef(
       ctx.restore()
     }
 
-    const drawWheel = () => {
+    const drawWheel = (segments) => {
       const ctx = canvasContext
       let lastAngle = angleCurrent
       const len = segments.length
@@ -194,9 +188,10 @@ const WheelComponent = forwardRef(
       ctx.textBaseline = 'middle'
       ctx.textAlign = 'center'
       ctx.font = '1em ' + fontFamily
+      console.log('segments', segments)
       for (let i = 1; i <= len; i++) {
         const angle = PI2 * (i / len) + angleCurrent
-        drawSegment(i - 1, lastAngle, angle)
+        drawSegment(segments, i - 1, lastAngle, angle)
         lastAngle = angle
       }
 
@@ -224,7 +219,7 @@ const WheelComponent = forwardRef(
       ctx.stroke()
     }
 
-    const drawNeedle = () => {
+    const drawNeedle = (segments) => {
       const ctx = canvasContext
       ctx.lineWidth = 1
       ctx.strokeStyle = primaryColor
