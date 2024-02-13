@@ -20,6 +20,17 @@ const WheelComponent = forwardRef(
     },
     ref
   ) => {
+    console.log({
+      canvasStyle,
+      list,
+      winningSegment,
+      onFinished,
+      primaryColor,
+      contrastColor,
+      isOnlyOnce,
+      size,
+      fontFamily
+    })
     let currentSegment = { text: '', image: '', key: -1 }
     let timerHandle = 0
     let angleCurrent = 0
