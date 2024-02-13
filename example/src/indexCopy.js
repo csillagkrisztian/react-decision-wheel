@@ -20,17 +20,6 @@ const WheelComponent = forwardRef(
     },
     ref
   ) => {
-    console.log({
-      canvasStyle,
-      list,
-      winningSegment,
-      onFinished,
-      primaryColor,
-      contrastColor,
-      isOnlyOnce,
-      size,
-      fontFamily
-    })
     if (list.length === 0 || !list) {
       list = [
         {

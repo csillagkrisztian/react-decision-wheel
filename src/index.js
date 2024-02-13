@@ -20,17 +20,17 @@ const WheelComponent = forwardRef(
     },
     ref
   ) => {
-    console.log({
-      canvasStyle,
-      list,
-      winningSegment,
-      onFinished,
-      primaryColor,
-      contrastColor,
-      isOnlyOnce,
-      size,
-      fontFamily
-    })
+    if (list.length === 0 || !list) {
+      list = [
+        {
+          noData: true,
+          text: '',
+          image:
+            'https://i.ibb.co/Xzss21X/DALL-E-2024-02-13-12-14-00-Small-robot-looking-at-an-empty-wheel-of-fortune-1.jpg'
+        }
+      ]
+    }
+
     let currentSegment = { text: '', image: '', key: -1 }
     let timerHandle = 0
     let angleCurrent = 0
@@ -129,7 +129,6 @@ const WheelComponent = forwardRef(
     }))
 
     const spin = (segments) => {
-      console.log(segments)
       if (timerHandle === 0) {
         spinStart = new Date().getTime()
         const maxSpeed = Math.PI / `${segments.length}`
@@ -218,7 +217,7 @@ const WheelComponent = forwardRef(
 
     const drawSegment = (segments, key, lastAngle, angle) => {
       const ctx = canvasContext
-      const { image, text } = segments[key]
+      const { image, text, noData } = segments[key]
 
       // Draw the segment
       ctx.save()
@@ -227,22 +226,40 @@ const WheelComponent = forwardRef(
       ctx.arc(centerX, centerY, size, lastAngle, angle, false)
       ctx.lineTo(centerX, centerY)
       ctx.closePath()
-      ctx.fillStyle = segColors[key % segColors.length]
+      ctx.fillStyle = noData ? segColors[2] : segColors[key % segColors.length]
       ctx.fill()
       ctx.clip()
 
       // Create the image
-      ctx.translate(centerX, centerY)
-      ctx.rotate((lastAngle + angle) / 2)
-      ctx.translate(-centerX, -centerY)
-      ctx.translate(600, 0)
-      ctx.rotate(Math.PI / 2)
-      ctx.globalAlpha = currentSegment.key === key ? 0.95 : 0.15
-      ctx.translate(150, 15)
-      ctx.scale(0.5, 0.5)
-      ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height)
-      ctx.stroke()
-      ctx.restore()
+      if (!noData) {
+        ctx.translate(centerX, centerY)
+        ctx.rotate((lastAngle + angle) / 2)
+        ctx.translate(-centerX, -centerY)
+        ctx.translate(600, 0)
+        ctx.rotate(Math.PI / 2)
+        ctx.globalAlpha = currentSegment.key === key ? 0.95 : 0.15
+        ctx.translate(150, 15)
+        ctx.scale(0.5, 0.5)
+        ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height)
+        ctx.stroke()
+        ctx.restore()
+      } else {
+        ctx.globalAlpha = 0.2
+        ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height)
+        ctx.restore()
+
+        ctx.save()
+        ctx.translate(centerX, centerY)
+        ctx.fillStyle = '#EFE9F4'
+        ctx.font = 'bold 2em Tahoma'
+        ctx.shadowColor = primaryColor
+        ctx.shadowBlur = 4
+        ctx.shadowOffsetX = -0.5
+        ctx.shadowOffsetY = 0.5
+        ctx.strokeText('Plese Enter a Wheel Item', 0, 100)
+        ctx.fillText('Plese Enter a Wheel Item', 0, 100)
+        ctx.restore()
+      }
 
       // Draw the text in the segment
       ctx.save()
