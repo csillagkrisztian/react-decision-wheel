@@ -244,6 +244,7 @@ const WheelComponent = forwardRef(
         ctx.stroke()
         ctx.restore()
       } else {
+        console.log('no data', image)
         ctx.globalAlpha = 0.2
         ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height)
         ctx.restore()
